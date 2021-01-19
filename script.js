@@ -80,5 +80,49 @@ function initAnimacaoScroll() {
     window.addEventListener('scroll', animaScroll);
   }
 }
-
 initAnimacaoScroll() 
+
+function animaNumeros() {
+  const numeros = document.querySelectorAll('[data-numero]');
+
+  numeros.forEach((numero) => {
+    const total = +numero.innerText;
+    const inscremento = Math.floor(total / 80);
+    let start = 0;
+    const timer = setInterval(() => {
+      start = start + inscremento;
+      numero.innerText = start;
+      if(start > total) {
+        numero.innerText = total;
+        clearInterval(timer);
+      }
+    }, 25);
+  });
+}
+
+
+
+async function fetchAnimais (url){
+    try {
+      const animaisResponse = await fetch(url);
+      const animaisJSON = await animaisResponse.json();
+      const numerosGrid = document.querySelector('.numeros-grid');
+      animaisJSON.forEach(animal => {
+        const divAnimal = createAnimal(animal);
+        numerosGrid.appendChild(divAnimal);
+      });
+      animaNumeros();
+    } catch(erro) {
+      console.log(erro);
+    }
+  }
+  
+  
+  function createAnimal(animal) {
+    const div = document.createElement('div');
+    div.classList.add('numero-animal');
+    div.innerHTML = `<h3>${animal.especie}</h3><span data-numero>${animal.total}</span>`;
+    return div;
+  }
+  
+  fetchAnimais('./animaisapi.json');
